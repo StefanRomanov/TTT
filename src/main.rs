@@ -8,48 +8,19 @@ fn main() {
     print_board(board);
 
     loop {
-        let mut col: usize;
-        let mut row: usize;
-
-        println!("Player 1 engage !");
-        col = handle_input();
-        row = handle_input();
-
-        while !mark_board(&mut board, 1, col, row) {
-            col = handle_input();
-            row = handle_input();
-        }
-        let current_result = check_board(&board, 1, col, row);
-        print_board(board);
-
-        if current_result {
-            println!("Player 1 won!");
-            break
+        for player in 1..3  {
+            if play(&mut board, player) {
+                break
+            }
         }
 
-        println!("Player 2 engage !");
-        col = handle_input();
-        row = handle_input();
-
-        while !mark_board(&mut board, 2, col, row) {
-            col = handle_input();
-            row = handle_input();
-        }
-        let current_result = check_board(&board, 2, col, row);
-
-        print_board(board);
-
-        if current_result {
-            println!("Player 2 won!");
-            break
-        }
     }
 }
 
-fn check_board(board: &[[u8; 3]; 3], player: u8, row: usize, col: usize) -> bool {
-    return check_vertical(*board, col, player) ||
-        check_horizontal(*board, row, player) ||
-        check_diagonal(*board, row, col, player);
+fn check_board(board: [[u8; 3]; 3], player: u8, row: usize, col: usize) -> bool {
+    return check_vertical(board, col, player) ||
+        check_horizontal(board, row, player) ||
+        check_diagonal(board, row, col, player);
 }
 
 fn mark_board(board: &mut[[u8; 3]; 3], player: u8, x: usize, y: usize) -> bool {
@@ -59,7 +30,7 @@ fn mark_board(board: &mut[[u8; 3]; 3], player: u8, x: usize, y: usize) -> bool {
     }
 
     println!("Invalid input values");
-    return false;
+    false
 }
 
 fn check_vertical(board: [[u8; 3]; 3], col: usize, player: u8) -> bool {
@@ -115,4 +86,27 @@ fn handle_input() -> usize {
     }
 
     return val;
+}
+
+fn play(board: &mut[[u8; 3]; 3], player: u8) -> bool {
+    let mut col: usize;
+    let mut row: usize;
+
+    println!("Player {} engage !", player);
+    col = handle_input();
+    row = handle_input();
+
+    while !mark_board(board, player, col, row) {
+        col = handle_input();
+        row = handle_input();
+    }
+    let current_result = check_board(*board, player, col, row);
+    print_board(*board);
+
+    if current_result {
+        println!("Player {} won!", player);
+        return true
+    }
+
+    false
 }
